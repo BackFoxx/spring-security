@@ -1,5 +1,7 @@
 package com.cos.springsecurity1.config;
 
+import com.cos.springsecurity1.config.oauth.PrincipalOauth2UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -13,10 +15,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig {
 
-    @Bean
-    public BCryptPasswordEncoder encodePwd() {
-        return new BCryptPasswordEncoder();
-    }
+    @Autowired
+    private PrincipalOauth2UserService principalOauth2UserService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -35,7 +35,10 @@ public class SecurityConfig {
 
                 .and()
                 .oauth2Login()
-                .loginPage("/loginForm");
+                .loginPage("/loginForm")
+
+                .userInfoEndpoint()
+                .userService(principalOauth2UserService);
 
         return http.build();
     }
